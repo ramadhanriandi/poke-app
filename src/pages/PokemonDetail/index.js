@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 const PokemonDetail = (props) => {
   const { url } = props;
   
   return (
-      <div>PokemonDetail - {url}</div>
+    <div>PokemonDetail - {url}</div>
   );
 };
 

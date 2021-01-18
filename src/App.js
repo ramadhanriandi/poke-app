@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import Button from './components/common/Button';
 import PokemonDetail from './pages/PokemonDetail';
 import PokemonList from './pages/PokemonList';
 
@@ -10,7 +9,6 @@ import './App.css';
 const App = () => {
   return (
     <div className="App">
-      <Button />
       <BrowserRouter>
         <Switch>
           <Route exact path="/">
