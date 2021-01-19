@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import NavIcon from '../../assets/img/back.png';
 import CatchIcon from '../../assets/img/catch.png';
 import OverlayBackground from '../../components/common/OverlayBackground';
+import PokemonFailCatchModal from '../../components/pages/PokemonDetail/PokemonFailCatchModal';
 import PokemonSuccessCatchModal from '../../components/pages/PokemonDetail/PokemonSuccessCatchModal';
 
 import { PokemonDetailWrapper } from './styles';
@@ -18,6 +19,14 @@ const PokemonDetail = (props) => {
 
   const handleCatchPokemon = () => {
     setIsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModal(false);
+  };
+
+  const handleRetryCatch = () => {
+    handleCatchPokemon();
   };
 
   const handleSave = () => {
@@ -96,11 +105,15 @@ const PokemonDetail = (props) => {
 
       {isModal && (
         <OverlayBackground>
-          <PokemonSuccessCatchModal
+          {/* <PokemonSuccessCatchModal
             errorMessage={errorMessage}
             handleSave={handleSave}
             nickname={nickname}
             setNickname={setNickname}
+          /> */}
+          <PokemonFailCatchModal
+            handleCancel={handleCloseModal}
+            handleOk={handleRetryCatch}
           />
         </OverlayBackground>
       )}

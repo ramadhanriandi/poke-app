@@ -11,6 +11,12 @@ export const StyledModal = styled.div`
   .modal {
     &__button {
       align-self: flex-end;
+
+      &--grouped {
+        column-gap: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
     &__error {
