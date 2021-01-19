@@ -1,24 +1,36 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+
+import { useQuery } from '@apollo/client';
 
 import NavIcon from '../../assets/img/back.png';
 import CatchIcon from '../../assets/img/catch.png';
 import OverlayBackground from '../../components/common/OverlayBackground';
 import PokemonFailCatchModal from '../../components/pages/PokemonDetail/PokemonFailCatchModal';
 import PokemonSuccessCatchModal from '../../components/pages/PokemonDetail/PokemonSuccessCatchModal';
+import { capitalizeFirstLetter } from '../../utils/string';
 
 import { MODAL_OPTIONS } from './constants';
+import { GET_POKEMON_QUERY } from './queries';
 import { PokemonDetailWrapper } from './styles';
 
 const PokemonDetail = (props) => {
   const { isMine } = props;
 
+  const { name, nickname: nicknameParam } = useParams();
+
   const [errorMessage, setErrorMessage] = useState("");
   const [isModal, setIsModal] = useState(false);
   const [modalState, setModalState] = useState(-1);
-  const [nickname, setNickname] = useState("");
+  const [nickname, setNickname] = useState(nicknameParam || "");
+
+  const { loading, error, data } = useQuery(GET_POKEMON_QUERY, {
+    variables: { name },
+  });
+
+  if (error) return `Error! ${error.message}`;
 
   const handleChooseModal = () => {
     return Math.floor(Math.random() * Math.floor(_.size(MODAL_OPTIONS)));
@@ -80,57 +92,81 @@ const PokemonDetail = (props) => {
         <Link className="pokemon-detail__nav" to="/">
           <img src={NavIcon} alt="Back" />
         </Link>
-        <div className="pokemon-detail__name">Pikachu</div>
+        <div className="pokemon-detail__name">{capitalizeFirstLetter(name)}</div>
         <div className="pokemon-detail__avatar">
-          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="Avatar" />
+          <img
+            src={_.get(data, 'pokemon.sprites.front_default', '')}
+            alt="Avatar"
+          />
         </div>
       </div>
 
       <div className="pokemon-detail--bottom">
-        {isMine && (
-          <div className="pokemon-detail__data">
-            <div className="pokemon-detail__data__label">Nickname</div>
-            <div className="pokemon-detail__data__value">Pika</div>
-          </div>
-        )}
+        {loading
+          ? 'Loading ...'
+          : (
+            <div className="pokemon-detail--bottom__content">
+              {isMine && (
+                <div className="pokemon-detail__data">
+                  <div className="pokemon-detail__data__label">Nickname</div>
+                  <div className="pokemon-detail__data__value">{nickname}</div>
+                </div>
+              )}
 
-        <div className="pokemon-detail__data--grouped">
-          <div className="pokemon-detail__data">
-            <div className="pokemon-detail__data__label">Height</div>
-            <div className="pokemon-detail__data__value">0.70</div>
-          </div>
-          <div className="pokemon-detail__data">
-            <div className="pokemon-detail__data__label">Weight</div>
-            <div className="pokemon-detail__data__value">9.2</div>
-          </div>
-        </div>
+              <div className="pokemon-detail__data--grouped">
+                <div className="pokemon-detail__data">
+                  <div className="pokemon-detail__data__label">Height</div>
+                  <div className="pokemon-detail__data__value">
+                    {_.get(data, 'pokemon.height', 0)}
+                  </div>
+                </div>
+                <div className="pokemon-detail__data">
+                  <div className="pokemon-detail__data__label">Weight</div>
+                  <div className="pokemon-detail__data__value">
+                    {_.get(data, 'pokemon.weight', 0)}
+                  </div>
+                </div>
+              </div>
 
-        <div className="pokemon-detail__data">
-          <div className="pokemon-detail__data__label">Types</div>
-          <div className="pokemon-detail__data__types">
-            <div className="pokemon-detail__data__type">Electric</div>
-            <div className="pokemon-detail__data__type">Water</div>
-            <div className="pokemon-detail__data__type">Water</div>
-            <div className="pokemon-detail__data__type">Water</div>
-            <div className="pokemon-detail__data__type">Water</div>
-            <div className="pokemon-detail__data__type">Water</div>
-            <div className="pokemon-detail__data__type">Water</div>
-          </div>
-        </div>
+              <div className="pokemon-detail__data">
+                <div className="pokemon-detail__data__label">Types</div>
+                <div className="pokemon-detail__data__types">
+                  {
+                    _.map(_.get(data, 'pokemon.types', []), (types, index) => (
+                      <div
+                        className="pokemon-detail__data__type"
+                        key={`pokemon-detail__data__types-${index}`}
+                      >
+                        {capitalizeFirstLetter(types.type.name)}
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
 
-        <div className="pokemon-detail__data">
-          <div className="pokemon-detail__data__label">Moves</div>
-          <div className="pokemon-detail__data__moves">
-            <div className="pokemon-detail__data__move">Razor Wind</div>
-            <div className="pokemon-detail__data__move">Swords Dance</div>
-          </div>
-        </div>
+              <div className="pokemon-detail__data">
+                <div className="pokemon-detail__data__label">Moves</div>
+                <div className="pokemon-detail__data__moves">
+                  {
+                    _.map(_.get(data, 'pokemon.moves', []), (moves, index) => (
+                      <div
+                        className="pokemon-detail__data__move"
+                        key={`pokemon-detail__data__moves-${index}`}
+                      >
+                        {capitalizeFirstLetter(moves.move.name)}
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
 
-        {!isMine && (
-          <div aria-hidden="true" className="pokemon-detail__button" onClick={handleCatchPokemon}>
-            <img src={CatchIcon} alt="Catch" />
-          </div>
-        )}
+              {!loading && !isMine && (
+                <div aria-hidden="true" className="pokemon-detail__button" onClick={handleCatchPokemon}>
+                  <img src={CatchIcon} alt="Catch" />
+                </div>
+              )}
+            </div>
+          )}
       </div>
 
       {isModal && (

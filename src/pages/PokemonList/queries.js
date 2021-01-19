@@ -7,7 +7,6 @@ export const GET_POKEMONS_QUERY = gql`
       next
       previous
       results {
-        url
         name
         image
       }

@@ -41,11 +41,8 @@ export const PokemonDetailWrapper = styled.div`
     }
 
     &__button {
-      bottom: 48px;
       cursor: pointer;
-      left: calc(50vw - 40.5px);
-      position: absolute;
-      z-index: 20;
+      margin-top: 20px;
     }
 
     &__data {

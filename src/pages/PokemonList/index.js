@@ -28,6 +28,8 @@ const PokemonList = (props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
+  if (error) return `Error! ${error.message}`;
+
   const handleChangeTab = () => {
     if (tab === TABS.ALL) setTab(TABS.MINE);
     else setTab(TABS.ALL);
@@ -36,8 +38,6 @@ const PokemonList = (props) => {
   const handleClickMore = () => {
     setOffset(offset + GET_POKEMONS_VARIABLES.LIMIT);
   };
-
-  if (error) return `Error! ${error.message}`;
 
   return (
     <PokemonListWrapper>

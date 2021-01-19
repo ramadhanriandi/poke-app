@@ -28,7 +28,7 @@ const App = () => {
             <Route exact path="/pokemons/:name">
               <PokemonDetail />
             </Route>
-            <Route exact path="/pokemons/my/:nickname">
+            <Route exact path="/pokemons/my/:name/:nickname">
               <PokemonDetail isMine />
             </Route>
           </Switch>
