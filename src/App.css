@@ -5,7 +5,7 @@
   color: #1e2732;
   font-family: 'Rubik', sans-serif;
   font-size: 14px;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0 auto;
   max-width: 480px;
   text-align: center;
