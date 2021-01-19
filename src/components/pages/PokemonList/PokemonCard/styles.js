@@ -1,4 +1,4 @@
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 export const StyledPokemonCard = styled.div`
   align-items: center;
@@ -56,7 +56,7 @@ export const StyledPokemonCard = styled.div`
       border-radius: 99px;
       color: #fff;
       display: flex;
-      font-size: 8px;
+      font-size: 10px;
       font-weight: 500;
       justify-content: center;
       margin: 9px 9px 0 0;

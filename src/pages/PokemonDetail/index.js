@@ -1,19 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import NavIcon from '../../assets/img/back.png';
 import CatchIcon from '../../assets/img/catch.png';
+import OverlayBackground from '../../components/common/OverlayBackground';
+import PokemonSuccessCatchModal from '../../components/pages/PokemonDetail/PokemonSuccessCatchModal';
 
 import { PokemonDetailWrapper } from './styles';
 
 const PokemonDetail = (props) => {
   const { isMine } = props;
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isModal, setIsModal] = useState(false);
+  const [nickname, setNickname] = useState("");
+
+  const handleCatchPokemon = () => {
+    setIsModal(true);
+  };
+
+  const handleSave = () => {
+    if (nickname.length) {
+      if (nickname === "exist") {
+        setErrorMessage("Sorry, the nickname already exists.");
+      } else {
+        console.log("submit ", nickname);
+        setIsModal(false);
+        setErrorMessage("");
+        setNickname("");
+      }
+    } else {
+      setErrorMessage("Sorry, the nickname is required.")
+    }
+  };
   
   return (
     <PokemonDetailWrapper>
       <div className="pokemon-detail--top">
-      <img src="./src/assets/img/logo.jpg" alt="" />
         <Link className="pokemon-detail__nav" to="/">
           <img src={NavIcon} alt="Back" />
         </Link>
@@ -64,11 +88,22 @@ const PokemonDetail = (props) => {
         </div>
 
         {!isMine && (
-          <div className="pokemon-detail__button">
+          <div aria-hidden="true" className="pokemon-detail__button" onClick={handleCatchPokemon}>
             <img src={CatchIcon} alt="Catch" />
           </div>
         )}
       </div>
+
+      {isModal && (
+        <OverlayBackground>
+          <PokemonSuccessCatchModal
+            errorMessage={errorMessage}
+            handleSave={handleSave}
+            nickname={nickname}
+            setNickname={setNickname}
+          />
+        </OverlayBackground>
+      )}
     </PokemonDetailWrapper>
   );
 };
