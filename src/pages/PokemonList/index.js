@@ -17,7 +17,7 @@ const PokemonList = (props) => {
   return (
     <PokemonListWrapper>
       <div className="pokemon-list__header">
-        <img src="./src/assets/img/logo.jpg" alt="Logo" />
+        <img src="./src/assets/img/logo.jpg" alt="" />
         <h1>Pokepedia</h1>
       </div>
 

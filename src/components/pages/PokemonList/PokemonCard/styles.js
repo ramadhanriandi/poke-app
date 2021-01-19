@@ -31,9 +31,11 @@ export const StyledPokemonCard = styled.div`
     }
 
     &__name {
+      color: #1e2732;
       font-size: 16px;
       font-weight: 500;
-      margin-bottom: 9px;
+      margin-bottom: 4px;
+      text-decoration: none;
 
       span {
         color: #8792e2;
@@ -57,7 +59,7 @@ export const StyledPokemonCard = styled.div`
       font-size: 8px;
       font-weight: 500;
       justify-content: center;
-      margin-right: 9px;
+      margin: 9px 9px 0 0;
       padding: 8px 12px;
     }
 

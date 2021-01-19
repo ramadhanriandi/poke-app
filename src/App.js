@@ -18,10 +18,10 @@ const App = () => {
             <PokemonList />
           </Route>
           <Route exact path="/pokemons/:id">
-            <PokemonDetail url={"all"} />
+            <PokemonDetail />
           </Route>
           <Route exact path="/pokemons/my/:nickname">
-            <PokemonDetail url={"mine"} />
+            <PokemonDetail isMine />
           </Route>
         </Switch>
       </BrowserRouter>
