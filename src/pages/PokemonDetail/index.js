@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 
 import NavIcon from '../../assets/img/back.png';
@@ -8,6 +9,7 @@ import OverlayBackground from '../../components/common/OverlayBackground';
 import PokemonFailCatchModal from '../../components/pages/PokemonDetail/PokemonFailCatchModal';
 import PokemonSuccessCatchModal from '../../components/pages/PokemonDetail/PokemonSuccessCatchModal';
 
+import { MODAL_OPTIONS } from './constants';
 import { PokemonDetailWrapper } from './styles';
 
 const PokemonDetail = (props) => {
@@ -15,14 +17,21 @@ const PokemonDetail = (props) => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [isModal, setIsModal] = useState(false);
+  const [modalState, setModalState] = useState(-1);
   const [nickname, setNickname] = useState("");
 
+  const handleChooseModal = () => {
+    return Math.floor(Math.random() * Math.floor(_.size(MODAL_OPTIONS)));
+  };
+
   const handleCatchPokemon = () => {
+    setModalState(handleChooseModal());
     setIsModal(true);
   };
 
   const handleCloseModal = () => {
     setIsModal(false);
+    setModalState(-1);
   };
 
   const handleRetryCatch = () => {
@@ -35,13 +44,34 @@ const PokemonDetail = (props) => {
         setErrorMessage("Sorry, the nickname already exists.");
       } else {
         console.log("submit ", nickname);
-        setIsModal(false);
+
+        handleCloseModal();
+
         setErrorMessage("");
         setNickname("");
       }
     } else {
       setErrorMessage("Sorry, the nickname is required.")
     }
+  };
+
+  const renderModal = () => {
+    if (modalState === MODAL_OPTIONS.SUCCESS) {
+      return (
+        <PokemonSuccessCatchModal
+          errorMessage={errorMessage}
+          handleSave={handleSave}
+          nickname={nickname}
+          setNickname={setNickname}
+        />
+      );
+    }
+    return (
+      <PokemonFailCatchModal
+        handleCancel={handleCloseModal}
+        handleOk={handleRetryCatch}
+      />
+    );
   };
   
   return (
@@ -104,18 +134,7 @@ const PokemonDetail = (props) => {
       </div>
 
       {isModal && (
-        <OverlayBackground>
-          {/* <PokemonSuccessCatchModal
-            errorMessage={errorMessage}
-            handleSave={handleSave}
-            nickname={nickname}
-            setNickname={setNickname}
-          /> */}
-          <PokemonFailCatchModal
-            handleCancel={handleCloseModal}
-            handleOk={handleRetryCatch}
-          />
-        </OverlayBackground>
+        <OverlayBackground>{renderModal()}</OverlayBackground>
       )}
     </PokemonDetailWrapper>
   );
