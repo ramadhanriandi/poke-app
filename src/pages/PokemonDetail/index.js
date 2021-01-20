@@ -4,7 +4,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 
 import { useQuery } from '@apollo/client';
-/** @jsx jsx */
+/** @jsx jsx */ /** @jsxRuntime classic */
 import { jsx, css } from '@emotion/react'
 
 import NavIcon from '../../assets/img/back.png';
