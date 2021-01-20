@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
 import { useQuery } from '@apollo/client';
+/** @jsx jsx */
+import { jsx, css } from '@emotion/react'
 
 import NavIcon from '../../assets/img/back.png';
 import CatchIcon from '../../assets/img/catch.png';
@@ -14,7 +16,7 @@ import { capitalizeFirstLetter } from '../../utils/string';
 
 import { MODAL_OPTIONS } from './constants';
 import { GET_POKEMON_QUERY } from './queries';
-import { PokemonDetailWrapper } from './styles';
+import { bounce, PokemonDetailWrapper } from './styles';
 
 const PokemonDetail = (props) => {
   const { isMine } = props;
@@ -52,13 +54,30 @@ const PokemonDetail = (props) => {
 
   const handleSave = () => {
     if (nickname.length) {
-      if (nickname === "exist") {
+      let myPokemon = localStorage.getItem("myPokemon")
+        ? JSON.parse(localStorage.getItem("myPokemon"))
+        : { data: [] };
+
+      let isExist = false;
+
+      if (myPokemon && myPokemon.data.length) {
+        for (let i = 0; i < myPokemon.data.length; i++) {
+          if (myPokemon.data[i].nickname === nickname) {
+            isExist = true;
+            break;
+          }
+        }
+      }
+      
+      if (isExist) {
         setErrorMessage("Sorry, the nickname already exists.");
       } else {
-        console.log("submit ", nickname);
+        myPokemon = {
+          data: [...myPokemon.data, { name, nickname }]
+        };
+        localStorage.setItem("myPokemon", JSON.stringify(myPokemon));
 
         handleCloseModal();
-
         setErrorMessage("");
         setNickname("");
       }
@@ -161,7 +180,14 @@ const PokemonDetail = (props) => {
               </div>
 
               {!loading && !isMine && (
-                <div aria-hidden="true" className="pokemon-detail__button" onClick={handleCatchPokemon}>
+                <div
+                  aria-hidden="true"
+                  className="pokemon-detail__button"
+                  css={css`
+                    animation: ${bounce} 1s ease infinite;
+                  `}
+                  onClick={handleCatchPokemon}
+                >
                   <img src={CatchIcon} alt="Catch" />
                 </div>
               )}
