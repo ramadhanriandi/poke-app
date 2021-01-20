@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 
@@ -22,22 +23,45 @@ const PokemonList = (props) => {
   });
 
   useEffect(() => {
-    setPokemons(
-      _.concat(pokemons, _.get(data, 'pokemons.results', []))
-    );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (tab === TABS.ALL) {
+      if (offset === 0) {
+        setPokemons(_.get(data, 'pokemons.results', []));
+      }
+    } else {
+      setOffset(0);
+
+      const myPokemon = JSON.parse(localStorage.getItem("myPokemon"));
+
+      if (myPokemon && myPokemon.data.length) {
+        setPokemons(myPokemon.data);
+      }
+    }
+  }, [tab])
+
+  useEffect(() => {
+    if (tab === TABS.ALL) {
+      setPokemons(
+        _.concat(pokemons, _.get(data, 'pokemons.results', []))
+      );
+    }
   }, [data]);
 
   if (error) return `Error! ${error.message}`;
 
   const handleChangeTab = () => {
-    if (tab === TABS.ALL) setTab(TABS.MINE);
-    else setTab(TABS.ALL);
+    if (tab === TABS.ALL) {
+      setPokemons([]);
+      setTab(TABS.MINE);
+    } else {
+      setTab(TABS.ALL);
+    };
   };
 
   const handleClickMore = () => {
     setOffset(offset + GET_POKEMONS_VARIABLES.LIMIT);
   };
+
+  const pokemonCount = tab === TABS.ALL ? _.get(data, 'pokemons.count', 0) : pokemons.length;
 
   return (
     <PokemonListWrapper>
@@ -64,21 +88,23 @@ const PokemonList = (props) => {
       </div>
 
       <div className="pokemon-list__count">
-        <span>{_.get(data, 'pokemons.count', 0)}</span> &nbsp; Pokemons found
+        <span>{pokemonCount}</span>
+        &nbsp; Pokemon{pokemonCount > 1 ? 's' : ''} found
       </div>
       
       <div className="pokemon-list__content">
-        {loading && offset === GET_POKEMONS_VARIABLES.OFFSET
+        {tab === TABS.ALL && loading && offset === GET_POKEMONS_VARIABLES.OFFSET
           ? 'Loading ...' 
           : _.map(pokemons, (pokemon, index) => (
             <PokemonCard
               isMine={tab === TABS.MINE}
               key={`pokemon-list__content-${index}`}
               pokemon={pokemon}
+              setPokemons={setPokemons}
             />
           ))
         }
-        {_.get(data, 'pokemons.next') && (
+        {tab === TABS.ALL && _.get(data, 'pokemons.next') && (
           <div
             aria-hidden="true"
             className="pokemon-list__more"

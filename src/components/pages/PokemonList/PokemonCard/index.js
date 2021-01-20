@@ -11,7 +11,7 @@ import { GET_POKEMON_QUERY } from './queries';
 import { StyledPokemonCard } from './styles';
 
 const PokemonCard = (props) => {
-  const { isMine, pokemon, nickname } = props;
+  const { isMine, pokemon, setPokemons } = props;
 
   const { loading, error, data } = useQuery(GET_POKEMON_QUERY, {
     variables: { name: pokemon.name },
@@ -19,12 +19,32 @@ const PokemonCard = (props) => {
 
   if (error) return `Error! ${error.message}`;
 
+  const handleRemovePokemon = () => {
+    if (isMine) {
+      const myPokemon = JSON.parse(localStorage.getItem("myPokemon"));
+      let newMyPokemon = { data: [] };
+
+      for (let i = 0; i < myPokemon.data.length; i++) {
+        if (myPokemon.data[i].nickname !== pokemon.nickname) {
+          newMyPokemon.data.push(myPokemon.data[i])
+        }
+      }
+
+      setPokemons(newMyPokemon.data);
+
+      localStorage.setItem("myPokemon", JSON.stringify(newMyPokemon));
+    }
+  };
+
   return (
     <StyledPokemonCard>
       <div className="pokemon-card--left">
-        <Link to={`/pokemons/${pokemon.name}`} className="pokemon-card__name">
+        <Link
+          className="pokemon-card__name"
+          to={isMine ? `/pokemons/my/${pokemon.name}/${pokemon.nickname}` : `/pokemons/${pokemon.name}`}
+        >
           {capitalizeFirstLetter(pokemon.name)}
-          {isMine && <span>( {nickname} )</span>}
+          {isMine && <span>( {pokemon.nickname} )</span>}
         </Link>
         <div className="pokemon-card__types">
           {loading 
@@ -44,10 +64,18 @@ const PokemonCard = (props) => {
       <div className="pokemon-card--right">
         <img
           className="pokemon-card__avatar"
-          src={pokemon.image}
-          alt="Avatar"
+          src={isMine ? _.get(data, 'pokemon.sprites.front_default', '') : pokemon.image}
+          alt={"Avatar"}
         />
-        {isMine && <img className="pokemon-card__remove" src="./src/assets/img/close.svg" alt="" />}
+        {isMine && (
+          <img
+            aria-hidden="true"
+            className="pokemon-card__remove"
+            src="./src/assets/img/close.svg"
+            onClick={handleRemovePokemon}
+            alt="X"
+          />
+        )}
       </div>
     </StyledPokemonCard>
   );
@@ -56,12 +84,11 @@ const PokemonCard = (props) => {
 PokemonCard.propTypes = {
   isMine: PropTypes.bool,
   pokemon: PropTypes.object.isRequired,
-  nickname: PropTypes.string,
+  setPokemons: PropTypes.func.isRequired,
 };
 
 PokemonCard.defaultProps = {
   isMine: false,
-  nickname: '',
 }
 
 export default PokemonCard;

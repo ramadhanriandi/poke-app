@@ -8,6 +8,9 @@ export const GET_POKEMON_QUERY = gql`
           name
         }
       }
+      sprites {
+        front_default
+      }
     }
   }
 `;

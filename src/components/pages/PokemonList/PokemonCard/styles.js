@@ -24,6 +24,7 @@ export const StyledPokemonCard = styled.div`
       align-items: center;
       display: flex;
       flex: none;
+      height: 100%;
     }
 
     &__avatar {
