@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 import { useQuery } from '@apollo/client';
 
+import CloseIcon from '../../../../assets/img/close.svg';
 import { capitalizeFirstLetter } from '../../../../utils/string';
 
 import { GET_POKEMON_QUERY } from './queries';
@@ -71,7 +72,7 @@ const PokemonCard = (props) => {
           <img
             aria-hidden="true"
             className="pokemon-card__remove"
-            src="./src/assets/img/close.svg"
+            src={CloseIcon}
             onClick={handleRemovePokemon}
             alt="X"
           />
